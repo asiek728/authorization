@@ -1,1 +1,5 @@
-console.log("Loaded!")
+const logout = document.getElementById("logout")
+
+logout.addEventListener("click", () => {
+    localStorage.removeItem("token")
+})
