@@ -10,6 +10,11 @@ class Token {
         this.token = token;
     }
 
+    static async getAll() {
+        const response = await db.query("SELECT * FROM token");
+        return response.rows.map(p => new Token(p));
+    }
+
     static async create(user_id) {
         const token = uuidv4();
         const response = await db.query("INSERT INTO token (user_id, token) VALUES ($1, $2) RETURNING token_id;",
@@ -35,6 +40,14 @@ class Token {
         } else {
             return new Token(response.rows[0]);
         }
+    }
+
+    async destroy() {
+        const response = await db.query("DELETE FROM token WHERE token = $1 RETURNING *;", [this.token]);
+        if (response.rows.length != 1) {
+            throw new Error("Unable to delete token.")
+        }
+        return new Token(response.rows[0]);
     }
 
 }
